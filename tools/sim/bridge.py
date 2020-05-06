@@ -37,13 +37,14 @@ def cam_callback(image):
   pm.send('frame', dat)
 
 def imu_callback(imu):
-  #print(imu, imu.accelerometer)
+  print(imu, imu.accelerometer)
 
   dat = messaging.new_message('sensorEvents', 2)
   dat.sensorEvents[0].sensor = 4
   dat.sensorEvents[0].type = 0x10
   dat.sensorEvents[0].init('acceleration')
   dat.sensorEvents[0].acceleration.v = [imu.accelerometer.x, imu.accelerometer.y, imu.accelerometer.z]
+  
   # copied these numbers from locationd
   dat.sensorEvents[1].sensor = 5
   dat.sensorEvents[1].type = 0x10
@@ -97,11 +98,7 @@ def go(q):
   world.set_weather(weather)
 
   blueprint_library = world.get_blueprint_library()
-  """
-  for blueprint in blueprint_library.filter('sensor.*'):
-     print(blueprint.id)
-  exit(0)
-  """
+  
 
   world_map = world.get_map()
   vehicle_bp = random.choice(blueprint_library.filter('vehicle.tesla.*'))
@@ -202,14 +199,11 @@ def go(q):
 
     if rk.frame%1 == 0: # 20Hz?
       throttle_op, brake_op, steer_torque_op = sendcan_function(sendcan)
-      # print(" === torq, ",steer_torque_op, " ===")
       if is_openpilot_engaged:
         fake_wheel.response(steer_torque_op * A_steer_torque, speed)
         throttle_out = throttle_op * A_throttle
         brake_out = brake_op * A_brake
         steer_angle_out = fake_wheel.angle
-        # print(steer_torque_op)
-      # print(steer_angle_out)
       vc = carla.VehicleControl(throttle=throttle_out, steer=steer_angle_out / 3.14, brake=brake_out, reverse=in_reverse)
       vehicle.apply_control(vc)
 
@@ -224,13 +218,10 @@ if __name__ == "__main__":
   params.put("CommunityFeaturesToggle", "1")
   params.put("CalibrationParams", '{"vanishing_point": [582.06, 442.78], "valid_blocks": 20}')
 
-  # no carla, still run
   try:
     import carla
   except ImportError:
-    print("WARNING: NO CARLA")
-    while 1:
-      time.sleep(1)
+    print("Please install carla using easy_install carla/PythonAPI/carla/dist/carla-0.9.9-py3.7-linux-x86_64.egg || true")
     
   from multiprocessing import Process, Queue
   q = Queue()

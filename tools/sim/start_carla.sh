@@ -9,10 +9,17 @@ if [ ! -d carla ]; then
   mkdir -p carla_tmp
   cd carla_tmp
   tar xvf ../$FILE
-  easy_install PythonAPI/carla/dist/carla-0.9.7-py3.5-linux-x86_64.egg || true
+  easy_install carla/PythonAPI/carla/dist/carla-0.9.9-py3.7-linux-x86_64.egg || true
   cd ../
   mv carla_tmp carla
 fi
 
 cd carla
 ./CarlaUE4.sh 
+# Install new gcc for carla 
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+
+sudo apt install gcc-7 g++-7
+sudo update-alternatives --remove-all gcc
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 70 --slave /usr/bin/g++ g++ /usr/bin/g++-7
