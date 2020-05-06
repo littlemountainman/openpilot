@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-FILE=CARLA_0.9.7.tar.gz
+FILE=CARLA_0.9.9.tar.gz
 if [ ! -f $FILE ]; then
-  curl -O http://carla-assets-internal.s3.amazonaws.com/Releases/Linux/$FILE
+  curl -O https://carl1a-releases.s3.eu-west-3.amazonaws.com/Linux/$FILE
 fi
 if [ ! -d carla ]; then
   rm -rf carla_tmp
